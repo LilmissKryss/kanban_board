@@ -1,59 +1,66 @@
-import { DataTypes, Sequelize, Model, Optional } from 'sequelize';
+import sequelize from '../config/database.js';
+import sequelizePkg from 'sequelize';
 import bcrypt from 'bcrypt';
 
-interface UserAttributes {
-  id: number;
-  username: string;
-  password: string;
-}
+const { Model, DataTypes } = sequelizePkg;
 
-interface UserCreationAttributes extends Optional<UserAttributes, 'id'> {}
+class User extends Model {
+  declare id: number;
+  declare username: string;
+  declare email: string;
+  declare password: string;
+  declare createdAt: Date;
+  declare updatedAt: Date;
 
-export class User extends Model<UserAttributes, UserCreationAttributes> implements UserAttributes {
-  public id!: number;
-  public username!: string;
-  public password!: string;
-
-  public readonly createdAt!: Date;
-  public readonly updatedAt!: Date;
-
-  // Hash the password before saving the user
-  public async setPassword(password: string) {
-    const saltRounds = 10;
-    this.password = await bcrypt.hash(password, saltRounds);
+  public async checkPassword(password: string): Promise<boolean> {
+    return bcrypt.compare(password, this.password);
   }
 }
 
-export function UserFactory(sequelize: Sequelize): typeof User {
-  User.init(
-    {
-      id: {
-        type: DataTypes.INTEGER,
-        autoIncrement: true,
-        primaryKey: true,
-      },
-      username: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
-      password: {
-        type: DataTypes.STRING,
-        allowNull: false,
+User.init(
+  {
+    id: {
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
+      primaryKey: true,
+    },
+    username: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true,
+    },
+    email: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true,
+      validate: {
+        isEmail: true,
       },
     },
-    {
-      tableName: 'users',
-      sequelize,
-      hooks: {
-        beforeCreate: async (user: User) => {
-          await user.setPassword(user.password);
-        },
-        beforeUpdate: async (user: User) => {
-          await user.setPassword(user.password);
-        },
-      }
-    }
-  );
+    password: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    createdAt: DataTypes.DATE,
+    updatedAt: DataTypes.DATE,
+  },
+  {
+    sequelize,
+    modelName: 'User',
+  }
+);
 
-  return User;
-}
+// Hash password before creating or updating
+User.beforeCreate(async (user: User) => {
+  if (user.changed('password')) {
+    user.password = await bcrypt.hash(user.password, 10);
+  }
+});
+
+User.beforeUpdate(async (user: User) => {
+  if (user.changed('password')) {
+    user.password = await bcrypt.hash(user.password, 10);
+  }
+});
+
+export { User };

@@ -1,77 +1,104 @@
 import { Request, Response } from 'express';
 import { User } from '../models/user.js';
 
-// GET /Users
-export const getAllUsers = async (_req: Request, res: Response) => {
+// Get all users
+export const getAllUsers = async (_req: Request, res: Response): Promise<void> => {
   try {
     const users = await User.findAll({
       attributes: { exclude: ['password'] }
     });
     res.json(users);
-  } catch (error: any) {
-    res.status(500).json({ message: error.message });
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching users' });
   }
 };
 
-// GET /Users/:id
-export const getUserById = async (req: Request, res: Response) => {
-  const { id } = req.params;
+// Get user by ID
+export const getUserById = async (req: Request, res: Response): Promise<void> => {
   try {
+    const { id } = req.params;
     const user = await User.findByPk(id, {
       attributes: { exclude: ['password'] }
     });
-    if (user) {
-      res.json(user);
-    } else {
+
+    if (!user) {
       res.status(404).json({ message: 'User not found' });
+      return;
     }
-  } catch (error: any) {
-    res.status(500).json({ message: error.message });
+
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching user' });
   }
 };
 
-// POST /Users
-export const createUser = async (req: Request, res: Response) => {
-  const { username, password } = req.body;
+// Create user
+export const createUser = async (req: Request, res: Response): Promise<void> => {
   try {
-    const newUser = await User.create({ username, password });
-    res.status(201).json(newUser);
-  } catch (error: any) {
-    res.status(400).json({ message: error.message });
+    const { username, email, password } = req.body;
+
+    // Check if user exists
+    const existingUser = await User.findOne({
+      where: { username }
+    });
+
+    if (existingUser) {
+      res.status(400).json({ message: 'Username already exists' });
+      return;
+    }
+
+    const user = await User.create({
+      username,
+      email,
+      password
+    });
+
+    res.status(201).json({
+      id: user.id,
+      username: user.username,
+      email: user.email
+    });
+  } catch (error) {
+    res.status(400).json({ message: 'Error creating user' });
   }
 };
 
-// PUT /Users/:id
-export const updateUser = async (req: Request, res: Response) => {
-  const { id } = req.params;
-  const { username, password } = req.body;
+// Update user
+export const updateUser = async (req: Request, res: Response): Promise<void> => {
   try {
+    const { id } = req.params;
     const user = await User.findByPk(id);
-    if (user) {
-      user.username = username;
-      user.password = password;
-      await user.save();
-      res.json(user);
-    } else {
+
+    if (!user) {
       res.status(404).json({ message: 'User not found' });
+      return;
     }
-  } catch (error: any) {
-    res.status(400).json({ message: error.message });
+
+    await user.update(req.body);
+    res.json({
+      id: user.id,
+      username: user.username,
+      email: user.email
+    });
+  } catch (error) {
+    res.status(400).json({ message: 'Error updating user' });
   }
 };
 
-// DELETE /Users/:id
-export const deleteUser = async (req: Request, res: Response) => {
-  const { id } = req.params;
+// Delete user
+export const deleteUser = async (req: Request, res: Response): Promise<void> => {
   try {
+    const { id } = req.params;
     const user = await User.findByPk(id);
-    if (user) {
-      await user.destroy();
-      res.json({ message: 'User deleted' });
-    } else {
+
+    if (!user) {
       res.status(404).json({ message: 'User not found' });
+      return;
     }
-  } catch (error: any) {
-    res.status(500).json({ message: error.message });
+
+    await user.destroy();
+    res.json({ message: 'User deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: 'Error deleting user' });
   }
 };

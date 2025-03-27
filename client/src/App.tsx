@@ -1,12 +1,14 @@
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 
 import Navbar from './components/Navbar';
 
 function App() {
+  const location = useLocation();
+  const isLandingPage = location.pathname === '/';
 
   return (
     <div className='container'>
-      <Navbar />
+      {!isLandingPage && <Navbar />}
       <main>
         <Outlet />
       </main>

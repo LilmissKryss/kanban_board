@@ -5,18 +5,15 @@ import { Column } from './column.js';
 
 const { Model, DataTypes } = sequelizePkg;
 
-class Ticket extends Model {
+class Board extends Model {
   declare id: number;
   declare title: string;
-  declare description: string;
-  declare status: 'todo' | 'inprogress' | 'done';
   declare userId: number;
-  declare columnId: number;
   declare createdAt: Date;
   declare updatedAt: Date;
 }
 
-Ticket.init(
+Board.init(
   {
     id: {
       type: DataTypes.INTEGER,
@@ -27,15 +24,6 @@ Ticket.init(
       type: DataTypes.STRING,
       allowNull: false,
     },
-    description: {
-      type: DataTypes.TEXT,
-      allowNull: false,
-    },
-    status: {
-      type: DataTypes.ENUM('todo', 'inprogress', 'done'),
-      allowNull: false,
-      defaultValue: 'todo',
-    },
     userId: {
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -44,26 +32,27 @@ Ticket.init(
         key: 'id',
       },
     },
-    columnId: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-    },
   },
   {
     sequelize,
-    modelName: 'Ticket',
+    modelName: 'Board',
   }
 );
 
 // Define associations
-Ticket.belongsTo(User, {
+Board.belongsTo(User, {
   foreignKey: 'userId',
   as: 'user',
 });
 
-Ticket.belongsTo(Column, {
-  foreignKey: 'columnId',
-  as: 'column',
+User.hasMany(Board, {
+  foreignKey: 'userId',
+  as: 'boards',
 });
 
-export { Ticket };
+Board.hasMany(Column, {
+  foreignKey: 'boardId',
+  as: 'columns',
+});
+
+export { Board };

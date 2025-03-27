@@ -1,23 +1,53 @@
-const forceDatabaseRefresh = false;
-
-import dotenv from 'dotenv';
-dotenv.config();
-
 import express from 'express';
-import routes from './routes/index.js';
-import { sequelize } from './models/index.js';
+import cors from 'cors';
+import dotenv from 'dotenv';
+import sequelize from './config/database.js';
+import authRoutes from './routes/auth-routes.js';
+
+dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// Serves static files in the entire client's dist folder
-app.use(express.static('../client/dist'));
-
+// Middleware
+app.use(cors());
 app.use(express.json());
-app.use(routes);
 
-sequelize.sync({force: forceDatabaseRefresh}).then(() => {
-  app.listen(PORT, () => {
-    console.log(`Server is listening on port ${PORT}`);
-  });
+// Routes
+app.use('/api/auth', authRoutes);
+
+// Error handling middleware
+app.use((err: Error, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
+  console.error(err.stack);
+  res.status(500).json({ message: 'Something broke!' });
 });
+
+// Start server
+const startServer = async () => {
+  try {
+    // Test database connection
+    await sequelize.authenticate();
+    console.log('Database connection has been established successfully.');
+
+    
+    await sequelize.sync();
+    console.log('Database synced successfully');
+
+    app.listen(PORT, () => {
+      console.log(`Server is running on port ${PORT}`);
+    });
+  } catch (error) {
+    if (error instanceof Error) {
+      if ('code' in error && error.code === 'EADDRINUSE') {
+        console.error(`Port ${PORT} is already in use. Please try a different port.`);
+      } else {
+        console.error('Error starting server:', error.message);
+      }
+    } else {
+      console.error('An unknown error occurred:', error);
+    }
+    process.exit(1);
+  }
+};
+
+startServer();
