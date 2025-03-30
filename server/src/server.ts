@@ -1,10 +1,12 @@
-import express from 'express';
-import cors from 'cors';
-import dotenv from 'dotenv';
-import sequelize from './config/database.js';
-import authRoutes from './routes/auth-routes.js';
+import express, { ErrorRequestHandler } from "express";
+import cors from "cors";
+import path from "path";
+import { fileURLToPath } from "url";
+import sequelize from "./config/database.js";
+import routes from "./routes/index.js";
 
-dotenv.config();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -13,39 +15,37 @@ const PORT = process.env.PORT || 3001;
 app.use(cors());
 app.use(express.json());
 
-// Routes
-app.use('/api/auth', authRoutes);
+// API Routes
+app.use("/api", routes);
 
-// Error handling middleware
-app.use((err: Error, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
-  console.error(err.stack);
-  res.status(500).json({ message: 'Something broke!' });
+// Serve static files from the React app
+const clientBuildPath = path.join(__dirname, "../../client/dist");
+app.use(express.static(clientBuildPath));
+
+// Handle React routing, return all requests to React app
+app.get("*", (_req, res) => {
+  res.sendFile(path.join(clientBuildPath, "index.html"));
 });
 
-// Start server
+// Error handling middleware
+const errorHandler: ErrorRequestHandler = (err, _req, res, _next) => {
+  console.error(err.stack);
+  res.status(500).json({ message: "Something broke!" });
+};
+
+app.use(errorHandler);
+
 const startServer = async () => {
   try {
-    // Test database connection
     await sequelize.authenticate();
-    console.log('Database connection has been established successfully.');
-
-    
+    console.log("Database connection established successfully.");
     await sequelize.sync();
-    console.log('Database synced successfully');
-
+    console.log("Database synced successfully");
     app.listen(PORT, () => {
       console.log(`Server is running on port ${PORT}`);
     });
   } catch (error) {
-    if (error instanceof Error) {
-      if ('code' in error && error.code === 'EADDRINUSE') {
-        console.error(`Port ${PORT} is already in use. Please try a different port.`);
-      } else {
-        console.error('Error starting server:', error.message);
-      }
-    } else {
-      console.error('An unknown error occurred:', error);
-    }
+    console.error("Error starting server:", error);
     process.exit(1);
   }
 };

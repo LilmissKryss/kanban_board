@@ -1,27 +1,27 @@
-import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import Modal from '../components/Modal';
-import { authService } from '../services/authService';
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import Modal from "../components/Modal";
+import { authService } from "../services/authService";
 
 const LandingPage = () => {
   const navigate = useNavigate();
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [formData, setFormData] = useState({
-    username: '',
-    password: '',
+    username: "",
+    password: "",
   });
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   const validateForm = () => {
     const { username, password } = formData;
 
     if (!username.trim()) {
-      setError('Username is required');
+      setError("Username is required");
       return false;
     }
     if (!password.trim()) {
-      setError('Password is required');
+      setError("Password is required");
       return false;
     }
     return true;
@@ -29,7 +29,7 @@ const LandingPage = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
+    setError("");
 
     if (!validateForm()) {
       return;
@@ -40,16 +40,16 @@ const LandingPage = () => {
     try {
       const result = await authService.login({
         username: formData.username.trim(),
-        password: formData.password.trim()
+        password: formData.password.trim(),
       });
-      
+
       if (result.success) {
-        navigate('/board');
+        navigate("/board");
       } else {
-        setError(result.message || 'Invalid username or password');
+        setError(result.message || "Invalid username or password");
       }
     } catch (err) {
-      setError('An error occurred during login. Please try again.');
+      setError("An error occurred during login. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -57,9 +57,9 @@ const LandingPage = () => {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
@@ -71,7 +71,7 @@ const LandingPage = () => {
         </Link>
         <div className="nav-buttons">
           <button className="btn btn-primary">New Ticket</button>
-          <button 
+          <button
             className="btn btn-secondary"
             onClick={() => setIsLoginModalOpen(true)}
           >
@@ -83,7 +83,10 @@ const LandingPage = () => {
         <h2 className="login-message">Login to create & view tickets</h2>
       </main>
 
-      <Modal isOpen={isLoginModalOpen} onClose={() => setIsLoginModalOpen(false)}>
+      <Modal
+        isOpen={isLoginModalOpen}
+        onClose={() => setIsLoginModalOpen(false)}
+      >
         <div className="login-modal">
           <h2>Login</h2>
           <form onSubmit={handleSubmit} noValidate>
@@ -115,12 +118,12 @@ const LandingPage = () => {
                 required
               />
             </div>
-            <button 
-              type="submit" 
+            <button
+              type="submit"
               className="btn btn-primary login-btn"
               disabled={isLoading}
             >
-              {isLoading ? 'Logging in...' : 'Login'}
+              {isLoading ? "Logging in..." : "Login"}
             </button>
           </form>
         </div>
@@ -129,4 +132,4 @@ const LandingPage = () => {
   );
 };
 
-export default LandingPage; 
+export default LandingPage;

@@ -1,7 +1,5 @@
 import sequelize from '../config/database.js';
 import sequelizePkg from 'sequelize';
-import { User } from './user.js';
-import { Column } from './column.js';
 
 const { Model, DataTypes } = sequelizePkg;
 
@@ -54,16 +52,5 @@ Ticket.init(
     modelName: 'Ticket',
   }
 );
-
-// Define associations
-Ticket.belongsTo(User, {
-  foreignKey: 'userId',
-  as: 'user',
-});
-
-Ticket.belongsTo(Column, {
-  foreignKey: 'columnId',
-  as: 'column',
-});
 
 export { Ticket };

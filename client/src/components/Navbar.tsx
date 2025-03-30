@@ -1,45 +1,55 @@
-import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import auth from '../utils/auth';
+import { useState, useEffect } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import auth from "../utils/auth";
 
 const Navbar = () => {
-  const [ loginCheck, setLoginCheck ] = useState(false);
-
-  const checkLogin = () => {
-    if(auth.loggedIn()) {
-      setLoginCheck(true);
-    }
-  };
+  const [loginCheck, setLoginCheck] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
-    console.log(loginCheck);
-    checkLogin();
-  }, [loginCheck])
+    setLoginCheck(auth.loggedIn());
+  }, []);
 
   return (
-    <div className='nav'>
-      <div className='nav-title'>
-        <Link to='/'>Krazy Kanban Board</Link>
-      </div>
-      <ul>
-      {
-        !loginCheck ? (
-          <li className='nav-item'>
-            <button type='button'>
-              <Link to='/login'>Login</Link>
+    <header className="header">
+      <Link to="/" className="title-link">
+        <h1 className="title">Krazy Kanban Board</h1>
+      </Link>
+      <div className="nav-buttons">
+        {location.pathname === "/" ? (
+          <>
+            <button className="btn btn-primary">New Ticket</button>
+            <button className="btn btn-secondary" onClick={() => navigate("/")}>
+              Login
             </button>
-          </li>
+          </>
         ) : (
-          <li className='nav-item'>
-            <button type='button' onClick={() => {
-              auth.logout();
-            }}>Logout</button>
-          </li>
-        )
-      }
-      </ul>
-    </div>
-  )
-}
+          <>
+            <button className="btn btn-primary">New Ticket</button>
+            {loginCheck ? (
+              <button
+                className="btn btn-secondary"
+                onClick={() => {
+                  auth.logout();
+                  navigate("/");
+                }}
+              >
+                Logout
+              </button>
+            ) : (
+              <button
+                className="btn btn-secondary"
+                onClick={() => navigate("/")}
+              >
+                Login
+              </button>
+            )}
+          </>
+        )}
+      </div>
+    </header>
+  );
+};
 
 export default Navbar;

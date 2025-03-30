@@ -1,7 +1,5 @@
 import sequelize from '../config/database.js';
 import sequelizePkg from 'sequelize';
-import { User } from './user.js';
-import { Column } from './column.js';
 
 const { Model, DataTypes } = sequelizePkg;
 
@@ -38,21 +36,5 @@ Board.init(
     modelName: 'Board',
   }
 );
-
-// Define associations
-Board.belongsTo(User, {
-  foreignKey: 'userId',
-  as: 'user',
-});
-
-User.hasMany(Board, {
-  foreignKey: 'userId',
-  as: 'boards',
-});
-
-Board.hasMany(Column, {
-  foreignKey: 'boardId',
-  as: 'columns',
-});
 
 export { Board };

@@ -17,29 +17,31 @@ interface RegisterCredentials extends LoginCredentials {
 }
 
 class AuthService {
-  private tokenKey = 'jwt_token';
-  private tokenExpiry = 'token_expiry';
+  private tokenKey = "jwt_token";
+  private tokenExpiry = "token_expiry";
   private sessionTimeout = 1000 * 60 * 60; // 1 hour
-  private apiUrl = 'http://localhost:3001/api';
+  private apiUrl = "http://localhost:3001/api";
 
-  async register(credentials: RegisterCredentials): Promise<{ success: boolean; message?: string }> {
+  async register(
+    credentials: RegisterCredentials
+  ): Promise<{ success: boolean; message?: string }> {
     try {
       if (credentials.password !== credentials.confirmPassword) {
         return {
           success: false,
-          message: 'Passwords do not match'
+          message: "Passwords do not match",
         };
       }
 
       const response = await fetch(`${this.apiUrl}/auth/register`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           username: credentials.username,
           email: credentials.email,
-          password: credentials.password
+          password: credentials.password,
         }),
       });
 
@@ -50,17 +52,17 @@ class AuthService {
           case 409:
             return {
               success: false,
-              message: 'Username or email already exists'
+              message: "Username or email already exists",
             };
           case 400:
             return {
               success: false,
-              message: data.message || 'Invalid registration data'
+              message: data.message || "Invalid registration data",
             };
           default:
             return {
               success: false,
-              message: data.message || 'Registration failed'
+              message: data.message || "Registration failed",
             };
         }
       }
@@ -68,67 +70,50 @@ class AuthService {
       // If registration is successful, automatically log in
       return this.login({
         username: credentials.username,
-        password: credentials.password
+        password: credentials.password,
       });
     } catch (error) {
-      console.error('Registration error:', error);
+      console.error("Registration error:", error);
       return {
         success: false,
-        message: 'Network error. Please check your connection and try again.'
+        message: "Network error. Please check your connection and try again.",
       };
     }
   }
 
-  async login(credentials: LoginCredentials): Promise<{ success: boolean; message?: string }> {
+  async login(
+    credentials: LoginCredentials
+  ): Promise<{ success: boolean; message?: string }> {
     try {
       if (!credentials.username || !credentials.password) {
         return {
           success: false,
-          message: 'Username and password are required'
+          message: "Username and password are required",
         };
       }
 
       const response = await fetch(`${this.apiUrl}/auth/login`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(credentials),
-        credentials: 'include', // Include cookies in the request
+        credentials: "include", // Include cookies in the request
       });
 
       const data = await response.json();
 
       if (!response.ok) {
-        // Handle specific error cases
-        switch (response.status) {
-          case 401:
-            return {
-              success: false,
-              message: 'Invalid username or password'
-            };
-          case 404:
-            return {
-              success: false,
-              message: 'Login service not found. Please try again later.'
-            };
-          case 500:
-            return {
-              success: false,
-              message: 'Server error. Please try again later.'
-            };
-          default:
-            return {
-              success: false,
-              message: data.message || 'Login failed. Please try again.'
-            };
-        }
+        return {
+          success: false,
+          message: "Invalid username or password",
+        };
       }
 
       if (!data.token) {
         return {
           success: false,
-          message: 'Invalid server response: No token received'
+          message: "Invalid server response: No token received",
         };
       }
 
@@ -136,10 +121,9 @@ class AuthService {
       this.setToken(token);
       return { success: true };
     } catch (error) {
-      console.error('Login error:', error);
       return {
         success: false,
-        message: 'Network error. Please check your connection and try again.'
+        message: "Invalid username or password",
       };
     }
   }
@@ -147,12 +131,15 @@ class AuthService {
   logout(): void {
     localStorage.removeItem(this.tokenKey);
     localStorage.removeItem(this.tokenExpiry);
-    window.location.href = '/';
+    window.location.href = "/";
   }
 
   setToken(token: string): void {
     localStorage.setItem(this.tokenKey, token);
-    localStorage.setItem(this.tokenExpiry, (Date.now() + this.sessionTimeout).toString());
+    localStorage.setItem(
+      this.tokenExpiry,
+      (Date.now() + this.sessionTimeout).toString()
+    );
   }
 
   getToken(): string | null {
@@ -162,7 +149,7 @@ class AuthService {
   isAuthenticated(): boolean {
     const token = this.getToken();
     const expiry = localStorage.getItem(this.tokenExpiry);
-    
+
     if (!token || !expiry) {
       return false;
     }
@@ -178,7 +165,10 @@ class AuthService {
   refreshSession(): void {
     const expiry = localStorage.getItem(this.tokenExpiry);
     if (expiry) {
-      localStorage.setItem(this.tokenExpiry, (Date.now() + this.sessionTimeout).toString());
+      localStorage.setItem(
+        this.tokenExpiry,
+        (Date.now() + this.sessionTimeout).toString()
+      );
     }
   }
 
@@ -186,10 +176,10 @@ class AuthService {
   getAuthHeaders(): HeadersInit {
     const token = this.getToken();
     return {
-      'Content-Type': 'application/json',
-      'Authorization': token ? `Bearer ${token}` : '',
+      "Content-Type": "application/json",
+      Authorization: token ? `Bearer ${token}` : "",
     };
   }
 }
 
-export const authService = new AuthService(); 
+export const authService = new AuthService();
