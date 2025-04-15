@@ -1,4 +1,4 @@
-import { UserData } from "./UserData";
+// UserData import removed as it's not used
 
 export interface TicketData {
   id: number | null;
