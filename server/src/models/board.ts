@@ -1,5 +1,5 @@
-import sequelize from '../config/database.js';
-import sequelizePkg from 'sequelize';
+import sequelize from "../config/database.js";
+import sequelizePkg from "sequelize";
 
 const { Model, DataTypes } = sequelizePkg;
 
@@ -26,14 +26,14 @@ Board.init(
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: 'Users',
-        key: 'id',
+        model: "User", // Changed from 'Users' to match the model name
+        key: "id",
       },
     },
   },
   {
     sequelize,
-    modelName: 'Board',
+    modelName: "Board",
   }
 );
 
