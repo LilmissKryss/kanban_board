@@ -65,22 +65,12 @@ const startServer = async () => {
     await sequelize.authenticate();
     console.log("Database connection established successfully.");
 
-    // Sync models in the correct order to handle foreign key constraints
-    // First, sync models that don't depend on other models
-    await sequelize.models.User.sync({ alter: true });
-    console.log("User table synced");
+    // Create all tables in the correct order
+    console.log("Starting database sync with force option to recreate tables");
 
-    // Then sync models that depend on User
-    await sequelize.models.Board.sync({ alter: true });
-    console.log("Board table synced");
-
-    // Then sync models that depend on Board
-    await sequelize.models.Column.sync({ alter: true });
-    console.log("Column table synced");
-
-    // Finally sync models that depend on User and Column
-    await sequelize.models.Ticket.sync({ alter: true });
-    console.log("Ticket table synced");
+    // Drop and recreate all tables in the correct order
+    await sequelize.sync({ force: true });
+    console.log("All database tables created successfully");
 
     console.log("All tables synced successfully");
 

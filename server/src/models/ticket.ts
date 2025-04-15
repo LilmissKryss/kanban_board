@@ -38,7 +38,7 @@ Ticket.init(
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: "User", // Changed from 'Users' to match the model name
+        model: "users", // Reference the actual table name
         key: "id",
       },
     },
@@ -46,7 +46,7 @@ Ticket.init(
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: "Column", // Added reference to Column model
+        model: "columns", // Reference the actual table name
         key: "id",
       },
     },
@@ -54,6 +54,7 @@ Ticket.init(
   {
     sequelize,
     modelName: "Ticket",
+    tableName: "tickets", // Explicitly set the table name
   }
 );
 
