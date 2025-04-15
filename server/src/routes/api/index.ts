@@ -5,7 +5,7 @@ import { userRouter } from "./user-routes.js";
 const router = Router();
 
 // Health check endpoint for Render
-router.get("/health", (req, res) => {
+router.get("/health", (_req, res) => {
   res.status(200).json({ status: "ok", message: "Server is running" });
 });
 
