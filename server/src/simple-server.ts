@@ -12,28 +12,46 @@ const PORT = process.env.PORT || 3001;
 // Determine allowed origins based on environment
 const allowedOrigins =
   process.env.NODE_ENV === "production"
-    ? ["https://kanban-frontend.onrender.com"]
+    ? [
+        "https://kanban-frontend.onrender.com",
+        "https://kanban-board-frontend-0ilp.onrender.com",
+        // Allow all Render domains for testing
+        "https://*.onrender.com",
+      ]
     : ["http://localhost:3000"];
 
 // Middleware
-app.use(
-  cors({
-    origin: function (origin, callback) {
-      // Allow requests with no origin (like mobile apps, curl, etc)
-      if (!origin) return callback(null, true);
+// For production, use a more permissive CORS policy for testing
+if (process.env.NODE_ENV === "production") {
+  app.use(
+    cors({
+      origin: true, // Allow all origins
+      credentials: true,
+      methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+      allowedHeaders: ["Content-Type", "Authorization"],
+    })
+  );
+} else {
+  // For development, use the configured origins
+  app.use(
+    cors({
+      origin: function (origin, callback) {
+        // Allow requests with no origin (like mobile apps, curl, etc)
+        if (!origin) return callback(null, true);
 
-      if (allowedOrigins.indexOf(origin) === -1) {
-        const msg =
-          "The CORS policy for this site does not allow access from the specified Origin.";
-        return callback(new Error(msg), false);
-      }
-      return callback(null, true);
-    },
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-  })
-);
+        if (allowedOrigins.indexOf(origin) === -1) {
+          const msg =
+            "The CORS policy for this site does not allow access from the specified Origin.";
+          return callback(new Error(msg), false);
+        }
+        return callback(null, true);
+      },
+      credentials: true,
+      methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+      allowedHeaders: ["Content-Type", "Authorization"],
+    })
+  );
+}
 app.use(express.json());
 
 // Health check endpoint for Render
@@ -50,7 +68,7 @@ app.post("/api/tickets", (_req, res) => {
   res.status(201).json({ message: "Ticket created successfully" });
 });
 
-// Auth endpoints
+// Auth endpoints with /api prefix
 app.post("/api/auth/login", (_req, res) => {
   res.json({
     token: "mock-token",
@@ -59,6 +77,21 @@ app.post("/api/auth/login", (_req, res) => {
 });
 
 app.post("/api/auth/register", (_req, res) => {
+  res.json({
+    token: "mock-token",
+    user: { id: 1, username: "testuser" },
+  });
+});
+
+// Auth endpoints without /api prefix (for compatibility)
+app.post("/auth/login", (_req, res) => {
+  res.json({
+    token: "mock-token",
+    user: { id: 1, username: "testuser" },
+  });
+});
+
+app.post("/auth/register", (_req, res) => {
   res.json({
     token: "mock-token",
     user: { id: 1, username: "testuser" },
