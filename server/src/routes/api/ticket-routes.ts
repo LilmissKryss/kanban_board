@@ -1,27 +1,31 @@
-import express from 'express';
+import express from "express";
 import {
-  getAllTickets,
+  getTickets,
   getTicketById,
   createTicket,
   updateTicket,
   deleteTicket,
-} from '../../controllers/ticket-controller.js';
+} from "../../controllers/ticketController.js";
+import { authenticateToken } from "../../middleware/auth.js";
 
 const router = express.Router();
 
-// GET /tickets - Get all tickets
-router.get('/', getAllTickets);
+// Apply authentication middleware to all routes
+router.use(authenticateToken);
 
-// GET /tickets/:id - Get a ticket by id
-router.get('/:id', getTicketById);
+// Get all tickets
+router.get("/", getTickets);
 
-// POST /tickets - Create a new ticket
-router.post('/', createTicket);
+// Get a single ticket by ID
+router.get("/:id", getTicketById);
 
-// PUT /tickets/:id - Update a ticket by id
-router.put('/:id', updateTicket);
+// Create a new ticket
+router.post("/", createTicket);
 
-// DELETE /tickets/:id - Delete a ticket by id
-router.delete('/:id', deleteTicket);
+// Update a ticket
+router.put("/:id", updateTicket);
 
-export { router as ticketRouter };
+// Delete a ticket
+router.delete("/:id", deleteTicket);
+
+export const ticketRouter = router;

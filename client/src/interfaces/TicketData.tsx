@@ -1,10 +1,12 @@
-import { UserData } from './UserData';
+import { UserData } from "./UserData";
 
 export interface TicketData {
   id: number | null;
-  name: string | null;
+  title: string | null;
   description: string | null;
   status: string | null;
-  assignedUserId: number | null;
-  assignedUser: UserData | null;
+  userId: number | null;
+  columnId: number | null;
+  createdAt?: Date;
+  updatedAt?: Date;
 }

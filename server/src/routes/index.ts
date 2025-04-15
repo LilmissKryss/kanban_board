@@ -1,12 +1,24 @@
-import { Router } from 'express';
-import authRoutes from './auth-routes.js';
-import apiRoutes from './api/index.js';
-import { authenticateToken } from '../middleware/auth.js';
+import express from "express";
+import authRoutes from "./auth.js";
+import boardRoutes from "./boards.js";
+import columnRoutes from "./columns.js";
+import taskRoutes from "./tasks.js";
+import apiRoutes from "./api/index.js";
+import { userRouter } from "./api/user-routes.js";
+import { authenticateToken } from "../middleware/auth.js";
 
-const router = Router();
+const router = express.Router();
 
-router.use('/auth', authRoutes);
-// TODO: Add authentication to the API routes
-router.use('/api', apiRoutes);
+// Public routes
+router.use("/auth", authRoutes);
+
+// API routes
+router.use("/", apiRoutes);
+
+// Protected routes
+router.use("/boards", authenticateToken, boardRoutes);
+router.use("/columns", authenticateToken, columnRoutes);
+router.use("/tasks", authenticateToken, taskRoutes);
+router.use("/users", authenticateToken, userRouter);
 
 export default router;
