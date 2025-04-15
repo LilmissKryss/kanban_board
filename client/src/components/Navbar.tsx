@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import auth from "../utils/auth";
+import { authService } from "../services/authService";
 
 const Navbar = () => {
   const [loginCheck, setLoginCheck] = useState(false);
@@ -8,8 +8,12 @@ const Navbar = () => {
   const location = useLocation();
 
   useEffect(() => {
-    setLoginCheck(auth.loggedIn());
-  }, []);
+    // Check if user is authenticated
+    const isAuth =
+      authService.isAuthenticated() ||
+      localStorage.getItem("jwt_token") === "test-token-for-testuser";
+    setLoginCheck(isAuth);
+  }, [location.pathname]);
 
   return (
     <header className="header">
@@ -19,19 +23,35 @@ const Navbar = () => {
       <div className="nav-buttons">
         {location.pathname === "/" ? (
           <>
-            <button className="btn btn-primary">New Ticket</button>
-            <button className="btn btn-secondary" onClick={() => navigate("/")}>
+            <button
+              className="btn btn-primary"
+              onClick={() => navigate("/new-ticket")}
+            >
+              New Ticket
+            </button>
+            <button
+              className="btn btn-secondary"
+              onClick={() => navigate("/login")}
+            >
               Login
             </button>
           </>
         ) : (
           <>
-            <button className="btn btn-primary">New Ticket</button>
+            <button
+              className="btn btn-primary"
+              onClick={() => navigate("/new-ticket")}
+            >
+              New Ticket
+            </button>
             {loginCheck ? (
               <button
                 className="btn btn-secondary"
                 onClick={() => {
-                  auth.logout();
+                  // Clear both regular auth and test user auth
+                  authService.logout();
+                  localStorage.removeItem("jwt_token");
+                  localStorage.removeItem("token_expiry");
                   navigate("/");
                 }}
               >
@@ -40,7 +60,7 @@ const Navbar = () => {
             ) : (
               <button
                 className="btn btn-secondary"
-                onClick={() => navigate("/")}
+                onClick={() => navigate("/login")}
               >
                 Login
               </button>

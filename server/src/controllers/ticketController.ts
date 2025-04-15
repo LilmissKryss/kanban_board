@@ -55,7 +55,7 @@ export const createTicket = async (req: AuthenticatedRequest, res: Response) => 
   }
 };
 
-export const updateTicket = async (req: Request, res: Response) => {
+export const updateTicket = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { title, description, status, columnId } = req.body;
     const ticket = await Ticket.findOne({
@@ -82,7 +82,7 @@ export const updateTicket = async (req: Request, res: Response) => {
   }
 };
 
-export const deleteTicket = async (req: Request, res: Response) => {
+export const deleteTicket = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const ticket = await Ticket.findOne({
       include: [{

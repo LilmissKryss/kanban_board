@@ -13,6 +13,15 @@ const LandingPage = () => {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
+  const handleNewTicketClick = () => {
+    // If user is not logged in, show login modal instead of navigating
+    if (!authService.isAuthenticated()) {
+      setIsLoginModalOpen(true);
+      return;
+    }
+    navigate("/new-ticket");
+  };
+
   const validateForm = () => {
     const { username, password } = formData;
 
@@ -70,7 +79,9 @@ const LandingPage = () => {
           <h1 className="title">Krazy Kanban Board</h1>
         </Link>
         <div className="nav-buttons">
-          <button className="btn btn-primary">New Ticket</button>
+          <button className="btn btn-primary" onClick={handleNewTicketClick}>
+            New Ticket
+          </button>
           <button
             className="btn btn-secondary"
             onClick={() => setIsLoginModalOpen(true)}

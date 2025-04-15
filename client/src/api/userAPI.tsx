@@ -1,25 +1,26 @@
-import Auth from '../utils/auth';
+import { authService } from "../services/authService";
 
 const retrieveUsers = async () => {
   try {
-    const response = await fetch('/api/users', {
+    const response = await fetch("/api/users", {
       headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${Auth.getToken()}`
-      }
+        ...authService.getAuthHeaders(),
+      },
     });
     const data = await response.json();
 
-    if(!response.ok) {
-      throw new Error('invalid user API response, check network tab!');
+    if (!response.ok) {
+      throw new Error("invalid user API response, check network tab!");
     }
 
-    return data;
+    // Refresh session timeout on successful API call
+    authService.refreshSession();
 
-  } catch (err) { 
-    console.log('Error from data retrieval:', err);
+    return data;
+  } catch (err) {
+    console.error("Error from data retrieval:", err);
     return [];
   }
-}
+};
 
 export { retrieveUsers };

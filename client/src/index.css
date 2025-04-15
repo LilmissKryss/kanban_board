@@ -1,7 +1,7 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,100..900;1,100..900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,100..900;1,100..900&display=swap");
 
 :root {
-  font-family: 'Inter Tight', system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: "Inter Tight", system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
   color-scheme: light dark;
@@ -13,13 +13,13 @@
 }
 
 /* webkit solution */
-::-webkit-input-placeholder { 
-  text-align:right; 
+::-webkit-input-placeholder {
+  text-align: right;
 }
 
 /* mozilla solution */
-input:-moz-placeholder { 
-  text-align:right; 
+input:-moz-placeholder {
+  text-align: right;
 }
 
 a {
@@ -32,14 +32,19 @@ a:hover {
 }
 
 body {
-  background: #ECF0F1;
+  background: #3c3636;
   background-size: cover;
   background-repeat: no-repeat no-repeat;
   background-position: center center;
   margin: 0;
-  place-items: center;
+  padding: 0;
   min-width: 320px;
   min-height: 100vh;
+  width: 100vw;
+  height: 100vh;
+  overflow-x: hidden;
+  color: #ffffff;
+  box-sizing: border-box;
 }
 
 h1 {
@@ -131,119 +136,194 @@ tbody tr:nth-child(odd) {
 }
 
 .board {
-  width: 100%;
+  width: 100vw;
+  height: calc(100vh - 70px); /* Subtract header height */
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+  background-color: #3c3636;
+  position: absolute;
+  left: 0;
+  right: 0;
+  overflow: hidden;
 }
 
 .board-display {
   display: flex;
+  flex: 1;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 .swim-lane {
   text-align: center;
   font-weight: 500;
-  width: 33%;
-  height: 90vh; 
-  border: 1px solid rgba(0, 0, 0, 0.2);
-  margin: 5px;
-  padding: 5px;
+  width: 33.33%;
+  height: 100%;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  margin: 0;
+  padding: 10px;
+  box-sizing: border-box;
+  overflow-y: auto;
+  flex-shrink: 0;
 }
 
 .todo {
-  background-color: #e9cbec;
+  background-color: rgba(74, 158, 255, 0.1); /* Light blue with transparency */
 }
 
 .inprogress {
-  background-color: #b864c4;
+  background-color: rgba(74, 158, 255, 0.2); /* Medium blue with transparency */
 }
 
 .done {
-  background-color: #732381;
+  background-color: rgba(74, 158, 255, 0.3); /* Darker blue with transparency */
 }
 
 .ticket-card {
   text-align: left;
-  background-color: #fff;
+  background-color: #3c3636;
+  color: #ffffff;
   padding: 15px;
-  margin-bottom: 10px;
+  margin-bottom: 15px;
   border-radius: 4px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  border: 0.1em solid black;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(74, 158, 255, 0.5);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.ticket-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
 .container {
   margin: 0;
-  padding: 0;
+  padding: 2rem 0 0 0; /* Add padding to the top */
   width: 100%;
+  min-height: calc(100vh - 70px); /* Subtract header height */
+  display: flex;
+  flex-direction: column;
+  background-color: #3c3636;
 }
-
-#create-ticket-link {
-  display: block;
-  margin-left: auto;
-}
-
 
 .form {
-  width: 60%;
-  height: 80%;
-  background-color: #b864c4;
+  width: 40%; /* Reduced from 60% */
+  max-width: 500px; /* Added max-width */
+  background-color: rgba(74, 158, 255, 0.1); /* Light blue with transparency */
   margin: auto;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  padding: 1.5rem; /* Added padding */
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(74, 158, 255, 0.3);
 }
 
-.form > h1, .form > label {
-  color: yellow;
-}
-
-.form > input {
-  width: 200px;
-  
+.form > h1 {
+  color: #4a9eff;
+  margin-bottom: 1rem; /* Added margin */
+  font-size: 1.8rem; /* Added font size */
 }
 
 .form > label {
-  margin-top: 2.5%;
-  margin-bottom: 2.5%;
+  color: #cccccc;
+  align-self: flex-start;
+  margin-left: 10%;
+}
+
+.form > input,
+.form > select,
+.form > textarea {
+  width: 90%; /* Increased from 80% to fill the smaller form better */
+  padding: 0.6rem; /* Reduced from 0.75rem */
+  border-radius: 4px;
+  border: 1px solid rgba(74, 158, 255, 0.3);
+  background-color: #2a2a2a;
+  color: white;
+  margin-bottom: 1rem; /* Reduced from 1.5rem */
+  font-size: 0.9rem; /* Added smaller font size */
+}
+
+.form > label {
+  margin-top: 1rem; /* Reduced from 2.5% */
+  margin-bottom: 0.5rem; /* Reduced from 2.5% */
 }
 
 .form > button {
-  margin-top: 2.5%;
+  margin-top: 1rem; /* Reduced from 2.5% */
+  background-color: #4a9eff;
+  color: white;
+  border: none;
+  padding: 0.6rem 1.2rem; /* Reduced from 0.75rem 1.5rem */
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  font-size: 0.9rem; /* Added smaller font size */
+}
+
+.form > button:hover {
+  background-color: #3b8be6;
 }
 
 .form > textarea {
-  resize: both;
-  min-height: 30px;
-  min-width: 30px;
+  resize: vertical;
+  min-height: 70px; /* Reduced from 100px */
+  font-family: inherit;
 }
 
 .editBtn {
-  background-color: #f9f9f9;
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
+  background-color: #4a9eff;
+  color: white;
+  border-radius: 4px;
+  border: none;
+  padding: 0.5em 1em;
   cursor: pointer;
-  transition: border-color 0.25s;
+  transition: background-color 0.2s;
+  text-decoration: none;
+  display: inline-block;
+  margin-right: 10px;
+  font-size: 0.9rem;
+}
+
+.editBtn:hover {
+  background-color: #3b8be6;
 }
 
 .deleteBtn {
-  background-color: #f9f9f9;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  border: none;
+  padding: 0.5em 1em;
   font-weight: 500;
-  color: black;
-  text-decoration: inherit;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  font-size: 0.9rem;
 }
 
 .deleteBtn:hover {
-  color: #535bf2;
+  background-color: rgba(255, 0, 0, 0.3);
 }
 
 .login-notice {
   display: flex;
-  width: 100%;
+  width: 100vw;
+  height: calc(100vh - 70px);
   align-items: center;
   justify-content: center;
+  background-color: #3c3636;
+  position: absolute;
+  left: 0;
+  right: 0;
+  color: #cccccc;
 }
-
 
 @media (prefers-color-scheme: light) {
   :root {

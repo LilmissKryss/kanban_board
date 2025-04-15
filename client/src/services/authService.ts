@@ -104,13 +104,17 @@ class AuthService {
       const data = await response.json();
 
       if (!response.ok) {
+        console.log("Login failed with status:", response.status);
         return {
           success: false,
           message: "Invalid username or password",
         };
       }
 
+      console.log("Login response data:", data);
+
       if (!data.token) {
+        console.log("No token in response");
         return {
           success: false,
           message: "Invalid server response: No token received",

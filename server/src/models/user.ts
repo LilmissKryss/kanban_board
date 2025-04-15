@@ -1,6 +1,6 @@
-import sequelize from '../config/database.js';
-import sequelizePkg from 'sequelize';
-import bcrypt from 'bcrypt';
+import sequelize from "../config/database.js";
+import sequelizePkg from "sequelize";
+import bcrypt from "bcrypt";
 
 const { Model, DataTypes } = sequelizePkg;
 
@@ -46,19 +46,19 @@ User.init(
   },
   {
     sequelize,
-    modelName: 'User',
+    modelName: "User",
   }
 );
 
 // Hash password before creating or updating
 User.beforeCreate(async (user: User) => {
-  if (user.changed('password')) {
+  if (user.changed("password")) {
     user.password = await bcrypt.hash(user.password, 10);
   }
 });
 
 User.beforeUpdate(async (user: User) => {
-  if (user.changed('password')) {
+  if (user.changed("password")) {
     user.password = await bcrypt.hash(user.password, 10);
   }
 });
