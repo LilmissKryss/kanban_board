@@ -1,8 +1,11 @@
 import { authService } from "../services/authService";
 
+// API base URL
+const API_BASE_URL = "http://localhost:3001/api";
+
 const retrieveUsers = async () => {
   try {
-    const response = await fetch("/api/users", {
+    const response = await fetch(`${API_BASE_URL}/users`, {
       headers: {
         ...authService.getAuthHeaders(),
       },

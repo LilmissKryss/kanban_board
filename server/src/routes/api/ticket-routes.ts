@@ -1,6 +1,12 @@
-import express from 'express';
-import { getTickets, createTicket, updateTicket, deleteTicket } from '../../controllers/ticketController.js';
-import { authenticateToken } from '../../middleware/auth.js';
+import express from "express";
+import {
+  getTickets,
+  getTicketById,
+  createTicket,
+  updateTicket,
+  deleteTicket,
+} from "../../controllers/ticketController.js";
+import { authenticateToken } from "../../middleware/auth.js";
 
 const router = express.Router();
 
@@ -8,15 +14,18 @@ const router = express.Router();
 router.use(authenticateToken);
 
 // Get all tickets
-router.get('/', getTickets);
+router.get("/", getTickets);
+
+// Get a single ticket by ID
+router.get("/:id", getTicketById);
 
 // Create a new ticket
-router.post('/', createTicket);
+router.post("/", createTicket);
 
 // Update a ticket
-router.put('/:id', updateTicket);
+router.put("/:id", updateTicket);
 
 // Delete a ticket
-router.delete('/:id', deleteTicket);
+router.delete("/:id", deleteTicket);
 
-export const ticketRouter = router; 
+export const ticketRouter = router;

@@ -3,6 +3,7 @@ import authRoutes from "./auth.js";
 import boardRoutes from "./boards.js";
 import columnRoutes from "./columns.js";
 import taskRoutes from "./tasks.js";
+import apiRoutes from "./api/index.js";
 import { userRouter } from "./api/user-routes.js";
 import { authenticateToken } from "../middleware/auth.js";
 
@@ -10,6 +11,9 @@ const router = express.Router();
 
 // Public routes
 router.use("/auth", authRoutes);
+
+// API routes
+router.use("/", apiRoutes);
 
 // Protected routes
 router.use("/boards", authenticateToken, boardRoutes);

@@ -573,3 +573,25 @@ tbody tr:nth-child(odd) {
     width: min(400px, 50vw);
   }
 }
+
+/* Drag and Drop Styles */
+.ticket-card.dragging {
+  opacity: 0.6;
+  transform: scale(0.95);
+  box-shadow: 0 0 10px rgba(74, 158, 255, 0.5);
+}
+
+.swimlane.drag-over {
+  background-color: rgba(74, 158, 255, 0.1);
+  box-shadow: inset 0 0 10px rgba(74, 158, 255, 0.3);
+}
+
+/* Add transition for smooth drag effects */
+.ticket-card {
+  transition: opacity 0.2s, transform 0.2s, box-shadow 0.2s;
+  cursor: grab;
+}
+
+.swimlane {
+  transition: background-color 0.2s, box-shadow 0.2s;
+}

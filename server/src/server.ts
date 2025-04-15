@@ -4,6 +4,8 @@ import path from "path";
 import { fileURLToPath } from "url";
 import sequelize from "./config/database.js";
 import routes from "./routes/index.js";
+// Import models to ensure associations are set up
+import "./models/index.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

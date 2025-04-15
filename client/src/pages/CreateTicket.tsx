@@ -1,18 +1,16 @@
 import { useState, useEffect, FormEvent, ChangeEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { createTicket } from "../api/ticketAPI";
-import { TicketData } from "../interfaces/TicketData";
 import { UserData } from "../interfaces/UserData";
 import { retrieveUsers } from "../api/userAPI";
 
 const CreateTicket = () => {
-  const [newTicket, setNewTicket] = useState<TicketData | undefined>({
-    id: 0,
-    name: "",
+  const [newTicket, setNewTicket] = useState({
+    title: "",
     description: "",
-    status: "Todo",
-    assignedUserId: 1,
-    assignedUser: null,
+    status: "todo",
+    userId: 10, // Updated to match the testuser ID in the database
+    columnId: 1, // Default column ID
   });
 
   const navigate = useNavigate();
@@ -35,29 +33,44 @@ const CreateTicket = () => {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (newTicket) {
-      const data = await createTicket(newTicket);
-      console.log(data);
-      navigate("/");
+      try {
+        const createdTicket = await createTicket(newTicket);
+        console.log("Ticket created successfully:", createdTicket);
+
+        // Store the created ticket in localStorage to be picked up by the Board component
+        localStorage.setItem(
+          "lastCreatedTicket",
+          JSON.stringify({
+            ...createdTicket,
+            timestamp: Date.now(), // Add timestamp to ensure Board component detects the change
+          })
+        );
+
+        // Redirect to the board page to see the new ticket
+        navigate("/board");
+      } catch (error) {
+        console.error("Error creating ticket:", error);
+      }
     }
   };
 
   const handleTextAreaChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setNewTicket((prev) => (prev ? { ...prev, [name]: value } : undefined));
+    setNewTicket((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleTextChange = (
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
-    setNewTicket((prev) => (prev ? { ...prev, [name]: value } : undefined));
+    setNewTicket((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleUserChange = (
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
-    setNewTicket((prev) => (prev ? { ...prev, [name]: value } : undefined));
+    setNewTicket((prev) => ({ ...prev, [name]: value }));
   };
 
   return (
@@ -65,11 +78,11 @@ const CreateTicket = () => {
       <div className="container">
         <form className="form" onSubmit={handleSubmit}>
           <h1>Create Ticket</h1>
-          <label htmlFor="tName">Ticket Name</label>
+          <label htmlFor="tName">Ticket Title</label>
           <textarea
             id="tName"
-            name="name"
-            value={newTicket?.name || ""}
+            name="title"
+            value={newTicket?.title || ""}
             onChange={handleTextAreaChange}
           />
           <label htmlFor="tStatus">Ticket Status</label>
@@ -79,9 +92,9 @@ const CreateTicket = () => {
             value={newTicket?.status || ""}
             onChange={handleTextChange}
           >
-            <option value="Todo">Todo</option>
-            <option value="In Progress">In Progress</option>
-            <option value="Done">Done</option>
+            <option value="todo">Todo</option>
+            <option value="inprogress">In Progress</option>
+            <option value="done">Done</option>
           </select>
           <label htmlFor="tDescription">Ticket Description</label>
           <textarea
@@ -92,8 +105,8 @@ const CreateTicket = () => {
           />
           <label htmlFor="tUserId">User's ID</label>
           <select
-            name="assignedUserId"
-            value={newTicket?.assignedUserId || ""}
+            name="userId"
+            value={newTicket?.userId || ""}
             onChange={handleUserChange}
           >
             {users ? (
@@ -107,8 +120,8 @@ const CreateTicket = () => {
             ) : (
               <textarea
                 id="tUserId"
-                name="assignedUserId"
-                value={newTicket?.assignedUserId || 0}
+                name="userId"
+                value={newTicket?.userId || 10}
                 onChange={handleTextAreaChange}
               />
             )}
