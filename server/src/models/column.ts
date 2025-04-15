@@ -31,7 +31,7 @@ Column.init(
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: "Board", // Changed from 'Boards' to match the model name
+        model: "boards", // Reference the actual table name
         key: "id",
       },
     },
@@ -39,6 +39,7 @@ Column.init(
   {
     sequelize,
     modelName: "Column",
+    tableName: "columns", // Explicitly set the table name
   }
 );
 

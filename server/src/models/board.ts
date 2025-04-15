@@ -26,7 +26,7 @@ Board.init(
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: "User", // Changed from 'Users' to match the model name
+        model: "users", // Reference the actual table name
         key: "id",
       },
     },
@@ -34,6 +34,7 @@ Board.init(
   {
     sequelize,
     modelName: "Board",
+    tableName: "boards", // Explicitly set the table name
   }
 );
 

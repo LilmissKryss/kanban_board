@@ -47,6 +47,7 @@ User.init(
   {
     sequelize,
     modelName: "User",
+    tableName: "users", // Explicitly set the table name
   }
 );
 
