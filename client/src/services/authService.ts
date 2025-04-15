@@ -20,7 +20,7 @@ class AuthService {
   private tokenKey = "jwt_token";
   private tokenExpiry = "token_expiry";
   private sessionTimeout = 1000 * 60 * 60; // 1 hour
-  private apiUrl = "http://localhost:3001/api";
+  private apiUrl = import.meta.env.VITE_API_URL || "http://localhost:3001/api";
 
   async register(
     credentials: RegisterCredentials

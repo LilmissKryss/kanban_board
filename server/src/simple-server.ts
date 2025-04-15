@@ -50,17 +50,33 @@ app.post("/api/tickets", (_req, res) => {
   res.status(201).json({ message: "Ticket created successfully" });
 });
 
+// Auth endpoints
+app.post("/api/auth/login", (_req, res) => {
+  res.json({
+    token: "mock-token",
+    user: { id: 1, username: "testuser" },
+  });
+});
+
+app.post("/api/auth/register", (_req, res) => {
+  res.json({
+    token: "mock-token",
+    user: { id: 1, username: "testuser" },
+  });
+});
+
+// Legacy endpoints for backward compatibility
 app.post("/api/users/login", (_req, res) => {
   res.json({
     token: "mock-token",
-    user: { id: 1, username: "testuser" }
+    user: { id: 1, username: "testuser" },
   });
 });
 
 app.post("/api/users/register", (_req, res) => {
   res.json({
     token: "mock-token",
-    user: { id: 1, username: "testuser" }
+    user: { id: 1, username: "testuser" },
   });
 });
 
