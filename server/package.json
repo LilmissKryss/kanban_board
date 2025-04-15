@@ -5,8 +5,10 @@
   "main": "server.js",
   "type": "module",
   "scripts": {
-    "start": "node dist/server.js",
+    "start": "node dist/simple-server.js",
+    "start:full": "node dist/server.js",
     "dev": "tsx watch src/server.ts",
+    "dev:simple": "tsx watch src/simple-server.ts",
     "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1",
     "seed": "node dist/seeds/index.js"
